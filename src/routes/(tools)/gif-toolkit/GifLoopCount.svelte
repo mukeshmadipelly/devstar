@@ -173,181 +173,125 @@
 </script>
 
 <div class="container">
-  <div class="title">Change GIF Loop Count and Speed</div>
-  <div class="upload-container">
-    <input type="file" accept="image/gif" on:change={handleGifInput} id="gif-upload" style="display: none;">
-    <label for="gif-upload" class="upload-button">Upload GIF</label>
+  <h2>Change GIF Loop Count</h2>
+  
+  <div class="input-group">
+    <label for="gifInput">Select GIF:</label>
+    <input 
+      type="file" 
+      id="gifInput" 
+      accept="image/gif" 
+      on:change={handleGifInput}
+    />
   </div>
 
-  {#if inputGif}
-    <div class="control-container">
-      <label for="loopOption">Loop Option:</label>
-      <select id="loopOption" bind:value={loopOption}>
-        <option value="infinite">Repeat Infinitely</option>
-        <option value="once">Loop Once (Play Twice)</option>
-        <option value="specific">Loop Specific Times</option>
-      </select>
-    </div>
+  <div class="input-group">
+    <label for="loopOption">Loop Option:</label>
+    <select id="loopOption" bind:value={loopOption}>
+      <option value="infinite">Repeat Infinitely</option>
+      <option value="once">Loop Once (Play Twice)</option>
+      <option value="specific">Loop Specific Times</option>
+    </select>
+  </div>
 
-    {#if loopOption === 'specific'}
-      <div class="control-container">
-        <label for="loopCount">Loop Count:</label>
-        <input 
-          type="number" 
-          id="loopCount" 
-          bind:value={loopCount} 
-          min="1" 
-          step="1"
-        />
-      </div>
-    {/if}
-
-    <div class="control-container">
-      <label for="speedControl">Animation Speed: {speedMultiplier === 1 ? 'Original' : `${speedMultiplier.toFixed(1)}x`}</label>
+  {#if loopOption === 'specific'}
+    <div class="input-group">
+      <label for="loopCount">Loop Count:</label>
       <input 
-        type="range" 
-        id="speedControl" 
-        bind:value={speedMultiplier} 
-        min="0.1" 
-        max="3" 
-        step="0.1"
+        type="number" 
+        id="loopCount" 
+        bind:value={loopCount} 
+        min="1" 
+        step="1"
       />
     </div>
-
-    <div class="button-group">
-      <button on:click={processGif} disabled={isProcessing || !inputGif}>
-        {isProcessing ? 'Processing...' : 'Process GIF'}
-      </button>
-      <button on:click={downloadGif} disabled={!gifFrames.length || isProcessing}>
-        Download GIF
-      </button>
-    </div>
-
-    {#if error}
-      <div class="error">{error}</div>
-    {/if}
-
-    <div class="preview-container">
-      <div class="preview">
-        <div>Processed GIF</div>
-        <canvas bind:this={canvasElement}></canvas>
-      </div>
-    </div>
   {/if}
+
+  <div class="input-group">
+    <label for="speedControl">Animation Speed:</label>
+    <input 
+      type="range" 
+      id="speedControl" 
+      bind:value={speedMultiplier} 
+      min="0.1" 
+      max="3" 
+      step="0.1"
+    />
+    <span>{speedMultiplier === 1 ? 'Original' : speedMultiplier.toFixed(1) + 'x'}</span>
+  </div>
+
+  <div class="button-group">
+    <button on:click={processGif} disabled={isProcessing || !inputGif}>
+      {isProcessing ? 'Processing...' : 'Process GIF'}
+    </button>
+    <button on:click={downloadGif} disabled={!gifFrames.length || isProcessing}>
+      Download GIF
+    </button>
+  </div>
+
+  {#if error}
+    <div class="error">{error}</div>
+  {/if}
+
+  <div class="gif-container">
+    <h3>Processed GIF:</h3>
+    <canvas bind:this={canvasElement}></canvas>
+  </div>
 </div>
 
 <style>
   .container {
-    max-width: 900px;
+    max-width: 600px;
     margin: auto;
-    text-align: center;
-  }
-
-  .title {
-    font-size: 24px;
-    margin-bottom: 20px;
-    font-weight: 600;
-    color: #333333;
-    background-color: #ffffff;
-    padding: 10px;
-    display: inline-block;
+    padding: 20px;
+    border: 1px solid #ccc;
     border-radius: 5px;
-    margin-top: 20px;
+    background: #f9f9f9;
   }
-
-  .upload-container {
-    margin-bottom: 20px;
+  .input-group {
+    margin-bottom: 15px;
   }
-
-  .upload-button {
-    display: inline-block;
-    padding: 12px 24px;
-    background-color: #28a745;
-    color: white;
-    text-decoration: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
+  .input-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
   }
-
-  .upload-button:hover {
-    background-color: #218838;
-  }
-
-  .control-container {
-    margin: 20px 0;
-    color: #333333;
-    background-color: #ffffff;
-    padding: 10px;
-    border-radius: 5px;
-    display: inline-block;
-    margin-bottom: 10px;
-  }
-
-  .control-container label {
-    font-weight: 600;
+  .input-group input,
+  .input-group select {
+    width: 100%;
+    padding: 8px;
     font-size: 16px;
-    color: #333333;
+    border: 1px solid #ccc;
+    border-radius: 3px;
   }
-
   .button-group {
-    margin: 20px 0;
+    margin-bottom: 15px;
   }
-
   .button-group button {
     padding: 10px 20px;
-    background-color: #007bff;
+    background-color: #4CAF50;
     color: white;
     border: none;
     border-radius: 4px;
     cursor: pointer;
     font-size: 16px;
-    margin-right: 10px;
-    transition: background-color 0.3s ease;
   }
-
-  .button-group button:hover {
-    background-color: #0056b3;
-  }
-
   .button-group button:disabled {
-    background-color: #ccc;
+    background-color: #cccccc;
     cursor: not-allowed;
   }
-
   .error {
-    color: #333333;
-    margin-top: 10px;
-    font-weight: bold;
-    background-color: #ffffff;
-    padding: 10px;
-    border-radius: 5px;
-    display: inline-block;
+    color: red;
+    margin-top: 5px;
   }
-
-  .preview-container {
-    display: flex;
-    justify-content: center;
+  .gif-container {
     margin-top: 20px;
-    gap: 20px;
-    font-size: 18px;
-    color: #333333;
-  }
-
-  .preview {
     text-align: center;
-    color: #333333;
-    background-color: #ffffff;
-    padding: 10px;
-    border-radius: 5px;
-    display: inline-block;
   }
-
-  .preview canvas {
+  .gif-container canvas {
     max-width: 100%;
     height: auto;
-    border: 2px solid #ccc;
-    border-radius: 5px;
-    margin-top: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
   }
 </style>

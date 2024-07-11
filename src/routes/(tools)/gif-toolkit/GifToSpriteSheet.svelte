@@ -130,183 +130,176 @@
 
 <main>
   <div class="container">
-    <div class="title">GIF to SpriteSheet Converter</div>
-    <div class="upload-container">
-      <input id="gifFileInput" type="file" accept="image/gif" on:change={handleFileInput} style="display: none;">
-      <label for="gifFileInput" class="upload-button">Select GIF File</label>
-    </div>
-
-    {#if gifFile}
-      <div class="control-container">
+    <h1>GIF to SpriteSheet Converter</h1>
+    <div class="converter">
+      <div class="input-section">
+        <label for="gifFileInput" class="file-label">Select GIF File:</label>
+        <input id="gifFileInput" type="file" accept="image/gif" on:change={handleFileInput} class="file-input">
+      </div>
+      <div class="preview-section">
+        <img id="gifPreview" alt="GIF Preview" class="gif-preview">
+      </div>
+      <div class="input-section">
         <label for="rowsInput">Rows:</label>
         <input id="rowsInput" type="number" bind:value={rows} min="1">
-      </div>
-      <div class="control-container">
         <label for="columnsInput">Columns:</label>
         <input id="columnsInput" type="number" bind:value={columns} min="1">
       </div>
-      <div class="control-container">
+      <div class="input-section">
         <label for="frameRateInput">Frame Rate (ms):</label>
         <input id="frameRateInput" type="number" bind:value={frameRate} min="1">
-      </div>
-      <div class="control-container">
         <label for="playbackReversedInput">Reverse Playback:</label>
         <input id="playbackReversedInput" type="checkbox" bind:checked={playbackReversed}>
       </div>
-      <div class="control-container">
+      <div class="input-section">
         <label for="skipFramesInput">Skip Frames:</label>
         <input id="skipFramesInput" type="text" bind:value={skipFrames} placeholder="e.g. 1,3,5">
+        <label for="gifBackgroundColorInput">GIF Background Color:</label>
+        <input id="gifBackgroundColorInput" type="text" bind:value={gifBackgroundColor}>
       </div>
-      <div class="control-container">
-        <label for="paddingInput">Padding:</label>
-        <input id="paddingInput" type="number" bind:value={padding} min="0">
-      </div>
-      <div class="control-container">
-        <label for="colorToneThresholdInput">Color Tone Threshold (%):</label>
-        <input id="colorToneThresholdInput" type="number" bind:value={colorToneThreshold} min="0" max="100">
-      </div>
-
-      <div class="button-group">
-        <button on:click={generateSpriteSheet}>Generate Sprite Sheet</button>
-      </div>
-
-      <p>{status}</p>
-
-      <div class="preview-container">
-        <div class="preview">
-          {#if spriteSheet}
-            <div class="highlighted-text">Generated Sprite Sheet</div>
-            <img src={spriteSheet} alt="Sprite Sheet" class="sprite-sheet">
-            <div>
-              <a href={spriteSheet} download="sprite_sheet.png" class="download-link">Download Sprite Sheet</a>
-            </div>
-          {/if}
+      <div class="input-section-row">
+        <div class="input-section">
+          <label for="newBackgroundColorInput">New Background Color:</label>
+          <input id="newBackgroundColorInput" type="text" bind:value={newBackgroundColor}>
+        </div>
+        <div class="input-section">
+          <label for="paddingInput">Padding:</label>
+          <input id="paddingInput" type="number" bind:value={padding} min="0">
+        </div>
+        <div class="input-section">
+          <label for="colorToneThresholdInput">Color Tone Threshold (%):</label>
+          <input id="colorToneThresholdInput" type="number" bind:value={colorToneThreshold} min="0" max="100">
         </div>
       </div>
-    {/if}
+      <div class="button-row">
+        <button on:click={generateSpriteSheet}>Generate Sprite Sheet</button>
+      </div>
+      <p>{status}</p>
+    </div>
+    <div class="output-section">
+      {#if spriteSheet}
+        <h2 class="highlighted-text">Generated Sprite Sheet</h2>
+        <img src={spriteSheet} alt="Sprite Sheet" class="sprite-sheet">
+        <div>
+          <a href={spriteSheet} download="sprite_sheet.png">Download Sprite Sheet</a>
+        </div>
+      {/if}
+    </div>
   </div>
   <canvas id="spriteSheetCanvas"></canvas>
 </main>
 
 <style>
   .container {
-    max-width: 900px;
-    margin: auto;
+    max-width: 100%;
+    margin: 0 auto;
+    padding: 20px;
+  }
+
+  h1 {
     text-align: center;
-  }
-
-  .title {
-    font-size: 24px;
-    margin-bottom: 20px;
-    font-weight: 600;
-    color: #333333;
-    background-color: #ffffff;
-    padding: 10px;
-    display: inline-block;
-    border-radius: 5px;
-    margin-top: 20px;
-  }
-
-  .upload-container {
+    font-size: 36px;
+    font-weight: bold;
     margin-bottom: 20px;
   }
 
-  .upload-button {
-    display: inline-block;
-    padding: 12px 24px;
-    background-color: #28a745;
-    color: white;
-    text-decoration: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
+  .converter {
+    background-color: #f9f9f9;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
   }
 
-  .upload-button:hover {
-    background-color: #218838;
-  }
-
-  .control-container {
-    margin: 20px 0;
-    color: #333333;
-    background-color: #ffffff;
-    padding: 10px;
-    border-radius: 5px;
-    display: inline-block;
+  .input-section {
+    display: flex;
+    flex-direction: column;
     margin-bottom: 10px;
-    width: calc(50% - 20px);
+    width: 200px;
+    margin-right: 20px;
   }
 
-  .control-container label {
-    font-weight: 600;
-    font-size: 16px;
-    color: #333333;
+  .input-section-row {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+  }
+
+  .input-section label {
     margin-bottom: 5px;
-    display: block;
   }
 
-  .control-container input {
-    width: calc(100% - 20px);
-    padding: 8px;
+  .input-section input {
+    padding: 10px;
     font-size: 16px;
     border: 1px solid #ddd;
     border-radius: 5px;
   }
 
-  .button-group {
-    margin: 20px 0;
-  }
-
-  .button-group button {
-    padding: 10px 20px;
-    background-color: #007bff;
-    color: white;
-    border: none;
-    border-radius: 4px;
+  .file-label {
+    display: inline-block;
     cursor: pointer;
-    font-size: 16px;
-    margin-right: 10px;
+    padding: 10px;
+    background-color: #4CAF50;
+    color: white;
+    border-radius: 20px;
     transition: background-color 0.3s ease;
   }
 
-  .button-group button:hover {
-    background-color: #0056b3;
+  .file-label:hover {
+    background-color: #45a049;
   }
 
-  .preview-container {
-    margin-top: 20px;
+  .file-input {
+    display: none;
   }
 
-  .preview {
+  .preview-section {
+    width: 100%;
     text-align: center;
+    margin-bottom: 20px;
   }
 
-  .highlighted-text {
-    color: #ff5722;
-    font-weight: 600;
-    font-size: 20px;
-    margin-bottom: 10px;
+  .gif-preview {
+    max-width: 200px;
+    max-height: 200px;
+    margin: auto;
+    display: block;
+  }
+
+  .button-row {
+    text-align: center;
+    margin-top: 20px;
+    width: 100%;
+  }
+
+  .button-row button {
+    padding: 10px 20px;
+    font-size: 18px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+
+  .button-row button:hover {
+    background-color: #45a049;
+  }
+
+  .output-section {
+    margin-top: 20px;
+    text-align: center;
   }
 
   .sprite-sheet {
     max-width: 100%;
-    margin-top: 10px;
-    border: 1px solid #ddd;
-    border-radius: 5px;
   }
 
-  .download-link {
-    display: inline-block;
-    padding: 10px 20px;
-    background-color: #007bff;
-    color: white;
-    text-decoration: none;
-    border-radius: 4px;
-    margin-top: 10px;
-    transition: background-color 0.3s ease;
-  }
-
-  .download-link:hover {
-    background-color: #0056b3;
+  .highlighted-text {
+    color: #FF5722;
   }
 </style>
